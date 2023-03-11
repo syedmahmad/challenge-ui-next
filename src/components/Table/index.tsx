@@ -40,11 +40,11 @@ export default function CustomPaginationActionsTable({ handleOpen, tableData } :
                     <TableBody>
                         {tableData.map((item: any) => (
                             <TableRow key={item.teamMember}>
-                                <TableCell align="left" sx={{ fontSize: '12px', fontWeight: 600, lineHeight: '20px'}}>{item.teamMember}</TableCell>
+                                <TableCell align="left" sx={{ fontSize: '12px', fontWeight: 600, lineHeight: '20px'}}>{item.name}</TableCell>
                                 <TableCell align="left" sx={{ fontSize: '14px', fontWeight: 400, lineHeight: '20px', color: '#425466'}}><Box sx={{ display: 'flex', alignItems: 'center'}}><Box sx={{ width: '10px', height: '10px', marginRight: '10px', background: `${item.priority === 'Low' ? '#F16063' : item.priority === 'Medium' ? '#F7936F' : '#66CB9F'}`, borderRadius: '50%'}}></Box>{item.priority}</Box></TableCell>
-                                <TableCell align="left" sx={{ fontSize: '14px', fontWeight: 400, lineHeight: '20px', color: '#425466'}}>{item.orderNumber}</TableCell>
-                                <TableCell align="left" sx={{ fontSize: '12px', fontWeight: 600, lineHeight: '20px', color: '#425466'}}>{item.team}</TableCell>
-                                <TableCell align="left" sx={{ fontSize: '14px', fontWeight: 400, lineHeight: '20px', color: '#425466'}}>{item.dueDate}</TableCell>
+                                <TableCell align="left" sx={{ fontSize: '14px', fontWeight: 400, lineHeight: '20px', color: '#425466'}}>{item.id}</TableCell>
+                                <TableCell align="left" sx={{ fontSize: '12px', fontWeight: 600, lineHeight: '20px', color: '#425466'}}>{item.team_name}</TableCell>
+                                <TableCell align="left" sx={{ fontSize: '14px', fontWeight: 400, lineHeight: '20px', color: '#425466'}}>{item.date}</TableCell>
                                 <TableCell align="left" sx={{ display: 'flex', alignItems: 'center'}}><MoreVert sx={{ color: '#718096'}} /></TableCell>
                             </TableRow>
                         ))}

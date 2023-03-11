@@ -3,19 +3,17 @@ import Table from "../components/Table";
 import { Modal, Box, Typography, Button, TextField, Select, FormControl, InputLabel, MenuItem, FormHelperText } from "@mui/material";
 import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-
+import dayjs from 'dayjs';
+import 'dayjs/locale/en';
 
 function createData(teamMember: string, priority: string, orderNumber: number, team: string, dueDate: string) {
-    return { teamMember, priority, orderNumber, team, dueDate };
+    return { name: teamMember, priority: priority, id: orderNumber, team_name: team, date: dueDate };
 }
 
 const rows = [
     createData('Robert Fox', 'High', 2345, 'Blue', '01/01/2024'),
     createData('Darlene Robertson', 'Low', 210735, 'Red', '01/01/2024'),
     createData('Theresa Webb', 'Medium', 7452342, 'Green', '01/01/2024'),
-    createData('Kristin Watson', 'Medium', 54234, 'Yellow', '01/01/2024'),
-    createData('Robert Fox', 'High', 2345, 'Blue', '01/01/2024'),
-    createData('Darlene Robertson', 'Low', 210735, 'Red', '01/01/2024'),
 ];
 
 const Home: React.FC = () => {
@@ -28,7 +26,8 @@ const Home: React.FC = () => {
     };
     const [data, setData] = React.useState(fields);
     const [open, setOpen] = useState(false);
-    const [tableRows, setTableRows] = React.useState(rows);
+    const [tableRows, setTableRows] = React.useState<any>([]);
+
     const handleClose = () => {
         setOpen(false)
     }
@@ -36,16 +35,23 @@ const Home: React.FC = () => {
     useEffect(() => {
         if(typeof window !== 'undefined')
         {
+            const initaltableData = JSON.parse(localStorage.getItem('form_data')!) || [];
+            if(initaltableData.length < 1)
+            {
+                localStorage.setItem('form_data', JSON.stringify(rows));
+            }
             const tableData = JSON.parse(localStorage.getItem('form_data')!) || [];
+            const newData: any = [];
             if( tableData.length > 0)
             {
+                setTableRows([]);
                 tableData.map((item: any) => {
-                    rows.push(
+                    newData.push(
                         createData(item.name, item.priority, item.id, item.team_name, item.date)
                     );
-                    setTableRows(rows);
                     return null
-                })
+                });
+                setTableRows(newData);
             }
         }
     }, []);
@@ -64,14 +70,19 @@ const Home: React.FC = () => {
     }
 
     const handleSave = () => {
-        if (typeof window !== undefined)
-        {   
+        if (typeof window !== 'undefined')
+        {
             const localData = JSON.parse(localStorage.getItem('form_data')!) || [];
-            if(localData?.length > 0)
+            if(data.date !== '' && data.name !== '' && data.priority !== '' && data.team_name !== '')
             {
-                localStorage.setItem('form_data', JSON.stringify([...localData, data]));
+                if(localData?.length > 0)
+                {
+                    localStorage.setItem('form_data', JSON.stringify([...localData, data]));
+                }else {
+                    localStorage.setItem('form_data', JSON.stringify([data]));
+                }
             }else {
-                localStorage.setItem('form_data', JSON.stringify([data]));
+                alert("All fields are mendatory")
             }
             setData(() => {
               return {
@@ -79,16 +90,20 @@ const Home: React.FC = () => {
               id: Math.floor(Math.random() * 10000)
             }});
             const tableData = JSON.parse(localStorage.getItem('form_data')!) || [];
+            const newData: any = [];
             if( tableData.length > 0)
             {
+                setTableRows([]);
                 tableData.map((item: any) => {
-                    rows.push(
+                    newData.push(
                         createData(item.name, item.priority, item.id, item.team_name, item.date)
                     );
-                    setTableRows(rows);
                     return null
-                })
+                });
+                setTableRows(newData);
             }
+            // closing the modal
+            handleClose();
         }
     }
 
@@ -180,14 +195,14 @@ const Home: React.FC = () => {
                             <Typography sx={{ color: '#425466', fontSize: '14px', fontWeight: 500, mb: 2}}>
                                 Due Date
                             </Typography>   
-                            <LocalizationProvider dateAdapter={AdapterDayjs}>
-                                <DatePicker sx={{width: '100%', backgroundColor: '#fff'}} />
+                            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="en">
+                                <DatePicker defaultValue={dayjs('01/01/2024')} sx={{width: '100%', backgroundColor: '#fff'}} format="DD/MM/YYYY" onChange={(newValue: any) => setData({ ...data, date: dayjs(newValue).format('DD/MM/YYYY') })}/>
                             </LocalizationProvider>        
                             <FormHelperText>Date format must be mm/dd/yyyyy</FormHelperText>      
                         </Box>
                     </Box>
                     <Box sx={{display: 'flex', justifyContent: 'space-between', width: '100%'}}>
-                        <Button variant="contained" size='small' sx={{ borderRadius: '6px', padding: '12px 20px', background: '#E4ECF7', width: '83px', height: '36px', fontSize: '12px', color: '#505780', textTransform: 'unset'}}> Cancel </Button>
+                        <Button variant="contained" size='small' sx={{ borderRadius: '6px', padding: '12px 20px', background: '#E4ECF7', width: '83px', height: '36px', fontSize: '12px', color: '#505780', textTransform: 'unset'}} onClick={handleClose}> Cancel </Button>
                         <Button variant="contained" size='small' sx={{ borderRadius: '6px', padding: '12px 20px', background: '#4C6FFF', width: '83px', height: '36px', fontSize: '12px',  textTransform: 'unset'}} onClick={() => handleSave()}> Submit </Button>
                     </Box>
                 </Box>
